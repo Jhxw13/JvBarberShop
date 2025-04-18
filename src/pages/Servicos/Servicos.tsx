@@ -1,9 +1,15 @@
-import React, { useState, useEffect } from 'react';
+
+import { PageContainer } from '@/components/PageContainer';
 
 export default function Servicos() {
   return (
-    <div>
-      <h1>Serviços</h1>
-    </div>
+    <PageContainer 
+      title="Serviços" 
+      description="Gerencie os serviços oferecidos pela barbearia"
+    >
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Conteúdo da página */}
+      </div>
+    </PageContainer>
   );
 }

@@ -1,4 +1,4 @@
-
+import { PageContainer } from '@/components/PageContainer';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -29,54 +29,35 @@ export default function Produtos() {
   ];
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">Produtos</h1>
+    <PageContainer 
+      title="Produtos" 
+      description="Gerencie o estoque e catálogo de produtos"
+    >
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {produtos.map((produto, index) => (
+          <Card key={index} className="bg-zinc-800">
+            <CardContent className="p-6">
+              <h2 className="text-lg font-medium">{produto.nome}</h2>
+              <p className="text-sm text-gray-400">R$ {produto.preco.toFixed(2)}</p>
+              <p className="text-sm text-gray-400">{produto.estoque} un</p>
+              <p className="text-sm text-gray-400">{produto.categoria}</p>
+              <Badge variant="outline" 
+                className={
+                  produto.status === "Em Alta" ? "bg-green-500/10 text-green-400" :
+                  produto.status === "Baixo Estoque" ? "bg-red-500/10 text-red-400" :
+                  "bg-blue-500/10 text-blue-400"
+                }
+              >
+                {produto.status}
+              </Badge>
+              <Button variant="ghost" className="text-purple-400 hover:text-purple-300 mt-2">Editar</Button>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+      <div className="mt-6">
         <Button className="bg-purple-600 hover:bg-purple-700">Novo Produto</Button>
       </div>
-
-      <Card className="bg-zinc-800">
-        <CardContent className="p-6">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-zinc-700">
-                  <th className="text-left py-3 px-4">Produto</th>
-                  <th className="text-left py-3 px-4">Preço</th>
-                  <th className="text-left py-3 px-4">Estoque</th>
-                  <th className="text-left py-3 px-4">Categoria</th>
-                  <th className="text-left py-3 px-4">Status</th>
-                  <th className="text-right py-3 px-4">Ações</th>
-                </tr>
-              </thead>
-              <tbody>
-                {produtos.map((produto, index) => (
-                  <tr key={index} className="border-b border-zinc-700/50 hover:bg-zinc-700/30">
-                    <td className="py-3 px-4">{produto.nome}</td>
-                    <td className="py-3 px-4">R$ {produto.preco.toFixed(2)}</td>
-                    <td className="py-3 px-4">{produto.estoque} un</td>
-                    <td className="py-3 px-4">{produto.categoria}</td>
-                    <td className="py-3 px-4">
-                      <Badge variant="outline" 
-                        className={
-                          produto.status === "Em Alta" ? "bg-green-500/10 text-green-400" :
-                          produto.status === "Baixo Estoque" ? "bg-red-500/10 text-red-400" :
-                          "bg-blue-500/10 text-blue-400"
-                        }
-                      >
-                        {produto.status}
-                      </Badge>
-                    </td>
-                    <td className="py-3 px-4 text-right">
-                      <Button variant="ghost" className="text-purple-400 hover:text-purple-300">Editar</Button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+    </PageContainer>
   );
 }
