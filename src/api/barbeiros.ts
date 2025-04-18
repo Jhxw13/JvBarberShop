@@ -35,24 +35,39 @@ export const getBarbeiroById = (req: any, res: any) => {
 
 // Adicionar novo barbeiro
 export const addBarbeiro = (req: any, res: any) => {
-  const { nome, especialidade, foto } = req.body;
-  db.run(
-    `INSERT INTO barbeiros (
-      nome, especialidade, foto, 
-      avaliacao, clientes_atendidos, disponivel
-    ) VALUES (?, ?, ?, 0, 0, 1)`,
-    [nome, especialidade, foto],
-    function(err: any) {
-      if (err) {
-        res.status(500).json({ error: err.message });
-        return;
-      }
-      res.json({ 
-        id: this.lastID,
-        message: 'Barbeiro adicionado com sucesso' 
-      });
+  try {
+    const { nome, especialidade, foto } = req.body;
+    
+    if (!nome || !especialidade) {
+      res.status(400).json({ error: 'Nome e especialidade são obrigatórios' });
+      return;
     }
-  );
+
+    db.run(
+      `INSERT INTO barbeiros (
+        nome, especialidade, foto, 
+        avaliacao, clientes_atendidos, disponivel
+      ) VALUES (?, ?, ?, 0, 0, 1)`,
+      [nome, especialidade, foto || '💇‍♂️'],
+      function(err: any) {
+        if (err) {
+          console.error('Erro SQL:', err);
+          res.status(500).json({ error: 'Erro ao salvar barbeiro' });
+          return;
+        }
+        res.json({ 
+          id: this.lastID,
+          nome,
+          especialidade,
+          foto: foto || '💇‍♂️',
+          message: 'Barbeiro adicionado com sucesso' 
+        });
+      }
+    );
+  } catch (error) {
+    console.error('Erro:', error);
+    res.status(500).json({ error: 'Erro interno do servidor' });
+  }
 };
 
 // Atualizar barbeiro
