@@ -16,20 +16,22 @@ function App() {
   return (
     <div className="flex h-screen bg-gradient-to-br from-dark-300 via-dark-200 to-dark-100">
       <Sidebar />
-      <main className="flex-1 overflow-auto p-8">
-        <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/pdv" element={<PDV />} />
-          <Route path="/agendamentos" element={<Agendamentos />} />
-          <Route path="/clientes" element={<Clientes />} />
-          <Route path="/servicos" element={<Servicos />} />
-          <Route path="/barbeiros" element={<Barbeiros />} />
-          <Route path="/produtos" element={<Produtos />} />
-          <Route path="/financeiro" element={<Financeiro />} />
-          <Route path="/relatorios" element={<Relatorios />} />
-          <Route path="/configuracoes" element={<Configuracoes />} />
-        </Routes>
-      </main>
+      <div className="flex-1 h-screen overflow-auto">
+        <main className="container mx-auto">
+          <Routes>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/pdv" element={<PDV />} />
+            <Route path="/agendamentos" element={<Agendamentos />} />
+            <Route path="/clientes" element={<Clientes />} />
+            <Route path="/servicos" element={<Servicos />} />
+            <Route path="/barbeiros" element={<Barbeiros />} />
+            <Route path="/produtos" element={<Produtos />} />
+            <Route path="/financeiro" element={<Financeiro />} />
+            <Route path="/relatorios" element={<Relatorios />} />
+            <Route path="/configuracoes" element={<Configuracoes />} />
+          </Routes>
+        </main>
+      </div>
     </div>
   );
 }
