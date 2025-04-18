@@ -57,7 +57,8 @@ export const addBarbeiro = (req: any, res: any) => {
 
 // Atualizar barbeiro
 export const updateBarbeiro = (req: any, res: any) => {
-  const { id, nome, especialidade, disponivel, foto } = req.body;
+  const { id } = req.params;
+  const { nome, especialidade, disponivel, foto } = req.body;
   db.run(
     `UPDATE barbeiros 
      SET nome = ?, especialidade = ?, 
