@@ -13,6 +13,7 @@ import {
 
 const navItems = [
   { name: "Dashboard", icon: LayoutDashboard, path: "/" },
+  { name: "PDV", icon: DollarSign, path: "/pdv" },
   { name: "Agendamentos", icon: CalendarCheck, path: "/agendamentos" },
   { name: "Clientes", icon: Users, path: "/clientes" },
   { name: "Barbeiros", icon: Scissors, path: "/barbeiros" },
