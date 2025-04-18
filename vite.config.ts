@@ -7,5 +7,10 @@ export default defineConfig({
   server: {
     host: '0.0.0.0',
     allowedHosts: ['3c9ade46-9e63-479d-b20c-f311700a7d7b-00-xntjlqz8rx3q.spock.replit.dev']
+  },
+  resolve: {
+    alias: {
+      "@": "/src"
+    }
   }
 })
