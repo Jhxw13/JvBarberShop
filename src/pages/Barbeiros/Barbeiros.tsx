@@ -53,29 +53,26 @@ export default function Barbeiros() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          nome: formData.nome,
+          especialidade: formData.especialidade,
+          foto: formData.foto || '💇‍♂️'
+        }),
       });
 
       if (!response.ok) {
-        throw new Error('Erro ao salvar barbeiro');
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Erro ao salvar barbeiro');
       }
 
       const data = await response.json();
-      const novoBarbeiro = {
-        ...formData,
-        id: data.id,
-        avaliacao: 0,
-        clientes_atendidos: 0,
-        disponivel: true
-      };
-
-      setBarbeiros([...barbeiros, novoBarbeiro]);
+      await fetchBarbeiros(); // Recarrega a lista de barbeiros
       setFormData({ nome: '', especialidade: '', foto: '💇‍♂️' });
       setIsModalOpen(false);
       alert('Barbeiro adicionado com sucesso!');
     } catch (error) {
       console.error('Erro ao adicionar barbeiro:', error);
-      alert('Erro ao adicionar barbeiro');
+      alert('Erro ao adicionar barbeiro. Por favor, tente novamente.');
     }
   };
 
