@@ -1,4 +1,3 @@
-
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 
@@ -24,11 +23,11 @@ db.serialize(() => {
     CREATE TABLE IF NOT EXISTS produtos (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       nome TEXT NOT NULL,
+      descricao TEXT,
       preco REAL NOT NULL,
       estoque INTEGER DEFAULT 0,
       categoria TEXT,
-      foto TEXT,
-      status TEXT DEFAULT 'Normal'
+      foto TEXT
     )
   `);
 
@@ -37,9 +36,9 @@ db.serialize(() => {
     CREATE TABLE IF NOT EXISTS servicos (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       nome TEXT NOT NULL,
+      descricao TEXT,
       preco REAL NOT NULL,
       duracao INTEGER NOT NULL,
-      descricao TEXT,
       foto TEXT
     )
   `);
@@ -75,13 +74,11 @@ db.serialize(() => {
   db.run(`
     CREATE TABLE IF NOT EXISTS vendas (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      data TEXT DEFAULT CURRENT_TIMESTAMP,
+      data DATETIME DEFAULT CURRENT_TIMESTAMP,
+      barbeiro_id INTEGER NOT NULL,
       total REAL NOT NULL,
-      tipo TEXT NOT NULL,
-      status TEXT DEFAULT 'concluido',
-      cliente_id INTEGER,
-      barbeiro_id INTEGER,
-      FOREIGN KEY (cliente_id) REFERENCES clientes (id),
+      forma_pagamento TEXT,
+      status TEXT DEFAULT 'finalizado',
       FOREIGN KEY (barbeiro_id) REFERENCES barbeiros (id)
     )
   `);
@@ -90,7 +87,8 @@ db.serialize(() => {
   db.run(`
     CREATE TABLE IF NOT EXISTS itens_venda (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      venda_id INTEGER,
+      venda_id INTEGER NOT NULL,
+      tipo TEXT NOT NULL,
       produto_id INTEGER,
       servico_id INTEGER,
       quantidade INTEGER NOT NULL,
@@ -114,6 +112,22 @@ db.serialize(() => {
       FOREIGN KEY (venda_id) REFERENCES vendas (id)
     )
   `);
+
+  // Inserir alguns dados de exemplo
+  db.run(`INSERT OR IGNORE INTO barbeiros (nome, especialidade, foto) VALUES 
+    ('João Silva', 'Corte Masculino', '👨‍💇‍♂️'),
+    ('Pedro Santos', 'Barba', '✂️'),
+    ('Carlos Oliveira', 'Corte e Barba', '💈')`);
+
+  db.run(`INSERT OR IGNORE INTO servicos (nome, descricao, preco, duracao) VALUES 
+    ('Corte Masculino', 'Corte tradicional', 35.00, 30),
+    ('Barba', 'Barba completa', 25.00, 20),
+    ('Corte + Barba', 'Combo completo', 55.00, 50)`);
+
+  db.run(`INSERT OR IGNORE INTO produtos (nome, descricao, preco, estoque, categoria) VALUES 
+    ('Pomada Modeladora', 'Pomada para cabelo', 29.90, 10, 'Cabelo'),
+    ('Óleo para Barba', 'Óleo hidratante', 34.90, 8, 'Barba'),
+    ('Shampoo Anticaspa', 'Shampoo especial', 45.90, 5, 'Cabelo')`);
 });
 
 module.exports = db;

@@ -25,8 +25,46 @@ export default function PDV() {
   const [produtos, setProdutos] = useState<Produto[]>([]);
   const [servicos, setServicos] = useState<Servico[]>([]);
   const [barbeiroSelecionado, setBarbeiroSelecionado] = useState<number | null>(null);
-  const [cartItems, setCartItems] = useState<(Produto | Servico)[]>([]);
+  const [cartItems, setCartItems] = useState<{id: number, tipo: string, nome: string, preco: number, quantidade: number}[]>([]);
   const [total, setTotal] = useState(0);
+
+  const finalizarVenda = async () => {
+    if (!barbeiroSelecionado) {
+      alert('Selecione um barbeiro para finalizar a venda');
+      return;
+    }
+    if (cartItems.length === 0) {
+      alert('Adicione pelo menos um item para finalizar a venda');
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/pdv/venda', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          barbeiro_id: barbeiroSelecionado,
+          items: cartItems,
+          total: total,
+          forma_pagamento: 'dinheiro'
+        }),
+      });
+
+      if (response.ok) {
+        alert('Venda finalizada com sucesso!');
+        setCartItems([]);
+        setTotal(0);
+        setBarbeiroSelecionado(null);
+      } else {
+        alert('Erro ao finalizar venda');
+      }
+    } catch (error) {
+      console.error('Erro ao finalizar venda:', error);
+      alert('Erro ao finalizar venda');
+    }
+  };
 
   useEffect(() => {
     fetchBarbeiros();
