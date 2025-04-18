@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Scissors, Star, Users, Plus, Pencil, Trash2 } from 'lucide-react';
 
 interface Barbeiro {
   id: number;
@@ -24,10 +25,6 @@ export default function Barbeiros() {
     foto: '💇‍♂️'
   });
 
-  useEffect(() => {
-    fetchBarbeiros();
-  }, []);
-
   const fetchBarbeiros = async () => {
     try {
       const response = await fetch('/api/barbeiros');
@@ -39,6 +36,10 @@ export default function Barbeiros() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchBarbeiros();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,23 +54,17 @@ export default function Barbeiros() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          nome: formData.nome,
-          especialidade: formData.especialidade,
-          foto: formData.foto || '💇‍♂️'
-        }),
+        body: JSON.stringify(formData),
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Erro ao salvar barbeiro');
+        throw new Error('Erro ao salvar barbeiro');
       }
 
-      const data = await response.json();
-      await fetchBarbeiros(); // Recarrega a lista de barbeiros
+      const novoBarbeiro = await response.json();
+      setBarbeiros([...barbeiros, novoBarbeiro]);
       setFormData({ nome: '', especialidade: '', foto: '💇‍♂️' });
       setIsModalOpen(false);
-      alert('Barbeiro adicionado com sucesso!');
     } catch (error) {
       console.error('Erro ao adicionar barbeiro:', error);
       alert('Erro ao adicionar barbeiro. Por favor, tente novamente.');
@@ -105,61 +100,77 @@ export default function Barbeiros() {
   }
 
   return (
-    <div className="p-6 space-y-6 max-w-7xl mx-auto">
-      <div className="flex justify-between items-center">
+    <div className="p-6 max-w-[1400px] mx-auto">
+      <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-purple-600 bg-clip-text text-transparent">
-            Barbeiros
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">
+            Equipe de Barbeiros
           </h1>
-          <p className="text-zinc-400 mt-1">Gerencie sua equipe de profissionais</p>
+          <p className="text-zinc-400 mt-2">Gerencie sua equipe de profissionais especializados</p>
         </div>
         <Button 
-          className="bg-gradient-to-r from-purple-500 to-purple-700 hover:from-purple-600 hover:to-purple-800 transition-all duration-300 shadow-lg hover:shadow-purple-500/20"
           onClick={() => setIsModalOpen(true)}
+          className="bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white px-6 py-3 rounded-lg flex items-center gap-2 shadow-lg hover:shadow-purple-500/20 transition-all duration-300"
         >
+          <Plus size={20} />
           Adicionar Barbeiro
         </Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {barbeiros.map((barbeiro) => (
-          <Card key={barbeiro.id} className="bg-zinc-800/50 backdrop-blur-sm border border-zinc-700/50 hover:border-purple-500/50 transition-all duration-300">
+          <Card key={barbeiro.id} className="bg-zinc-800/50 backdrop-blur-sm border border-purple-500/10 hover:border-purple-500/30 transition-all duration-300 group">
             <CardContent className="p-6">
-              <div className="flex items-center gap-4">
-                <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-700 rounded-full flex items-center justify-center text-2xl shadow-lg ring-2 ring-purple-500/20">
-                  {barbeiro.foto || '💇‍♂️'}
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center text-2xl shadow-lg transform group-hover:scale-110 transition-transform duration-300">
+                  {barbeiro.foto}
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-white">{barbeiro.nome}</h3>
-                  <p className="text-zinc-400">{barbeiro.especialidade}</p>
+                  <h3 className="text-xl font-bold text-white group-hover:text-purple-400 transition-colors">
+                    {barbeiro.nome}
+                  </h3>
+                  <div className="flex items-center gap-2 text-zinc-400">
+                    <Scissors size={16} />
+                    <span>{barbeiro.especialidade}</span>
+                  </div>
                 </div>
               </div>
               
-              <div className="mt-6 space-y-3">
-                <div className="flex items-center gap-2">
-                  <span className="text-yellow-400">★</span>
-                  <span className="font-medium">{barbeiro.avaliacao?.toFixed(1) || '0.0'}</span>
-                  <span className="text-zinc-400 text-sm">({barbeiro.clientes_atendidos || 0} avaliações)</span>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Star className="text-yellow-500" size={18} />
+                    <span className="font-medium">{barbeiro.avaliacao?.toFixed(1) || '0.0'}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-zinc-400">
+                    <Users size={18} />
+                    <span>{barbeiro.clientes_atendidos || 0} clientes</span>
+                  </div>
                 </div>
+
                 <Badge variant="outline" className={
                   barbeiro.disponivel 
-                    ? "bg-green-500/10 text-green-400 border-green-500/20" 
-                    : "bg-red-500/10 text-red-400 border-red-500/20"
+                    ? "w-full justify-center bg-green-500/10 text-green-400 border-green-500/20" 
+                    : "w-full justify-center bg-red-500/10 text-red-400 border-red-500/20"
                 }>
                   {barbeiro.disponivel ? "Disponível" : "Ocupado"}
                 </Badge>
-              </div>
-              
-              <div className="mt-6 grid grid-cols-2 gap-3">
-                <Button className="w-full bg-purple-600 hover:bg-purple-700 transition-all duration-300">
-                  Editar
-                </Button>
-                <Button 
-                  className="w-full bg-red-500/10 text-red-400 hover:bg-red-600 hover:text-white border border-red-500/20 hover:border-red-600 transition-all duration-300"
-                  onClick={() => handleDelete(barbeiro.id)}
-                >
-                  Excluir
-                </Button>
+
+                <div className="grid grid-cols-2 gap-3 mt-4">
+                  <Button 
+                    className="w-full bg-purple-500/10 text-purple-400 hover:bg-purple-500 hover:text-white border border-purple-500/20 transition-all duration-300 flex items-center justify-center gap-2"
+                  >
+                    <Pencil size={16} />
+                    Editar
+                  </Button>
+                  <Button 
+                    onClick={() => handleDelete(barbeiro.id)}
+                    className="w-full bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white border border-red-500/20 transition-all duration-300 flex items-center justify-center gap-2"
+                  >
+                    <Trash2 size={16} />
+                    Excluir
+                  </Button>
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -167,41 +178,45 @@ export default function Barbeiros() {
       </div>
 
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
-          <Card className="w-full max-w-md bg-zinc-800/90 border border-zinc-700/50">
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50">
+          <Card className="w-full max-w-md bg-zinc-800/90 border border-purple-500/20">
             <CardContent className="p-6">
-              <h2 className="text-xl font-bold mb-6">Adicionar Barbeiro</h2>
+              <h2 className="text-2xl font-bold mb-6 bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">
+                Novo Barbeiro
+              </h2>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-sm mb-2 text-zinc-400">Nome *</label>
+                  <label className="block text-sm mb-2 text-zinc-400">Nome do Barbeiro *</label>
                   <input
                     type="text"
-                    className="w-full p-3 rounded-lg bg-zinc-700/50 border border-zinc-600 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all duration-300"
+                    className="w-full p-3 rounded-lg bg-zinc-700/50 border border-purple-500/20 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all duration-300"
                     value={formData.nome}
                     onChange={(e) => setFormData({...formData, nome: e.target.value})}
                     required
+                    placeholder="Digite o nome do barbeiro"
                   />
                 </div>
                 <div>
                   <label className="block text-sm mb-2 text-zinc-400">Especialidade *</label>
                   <input
                     type="text"
-                    className="w-full p-3 rounded-lg bg-zinc-700/50 border border-zinc-600 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all duration-300"
+                    className="w-full p-3 rounded-lg bg-zinc-700/50 border border-purple-500/20 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all duration-300"
                     value={formData.especialidade}
                     onChange={(e) => setFormData({...formData, especialidade: e.target.value})}
                     required
+                    placeholder="Ex: Corte moderno, Barba"
                   />
                 </div>
                 <div className="flex gap-3 mt-6">
                   <Button 
                     type="submit" 
-                    className="flex-1 bg-gradient-to-r from-purple-500 to-purple-700 hover:from-purple-600 hover:to-purple-800"
+                    className="flex-1 bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white transition-all duration-300"
                   >
-                    Salvar
+                    Salvar Barbeiro
                   </Button>
                   <Button 
                     type="button" 
-                    className="flex-1 bg-zinc-700/50 hover:bg-zinc-600 transition-all duration-300"
+                    className="flex-1 bg-zinc-700/50 hover:bg-zinc-600 text-zinc-300 transition-all duration-300"
                     onClick={() => setIsModalOpen(false)}
                   >
                     Cancelar

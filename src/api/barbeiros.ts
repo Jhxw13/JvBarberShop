@@ -55,12 +55,13 @@ export const addBarbeiro = (req: any, res: any) => {
           res.status(500).json({ error: 'Erro ao salvar barbeiro' });
           return;
         }
-        res.json({ 
-          id: this.lastID,
-          nome,
-          especialidade,
-          foto: foto || '💇‍♂️',
-          message: 'Barbeiro adicionado com sucesso' 
+        
+        db.get('SELECT * FROM barbeiros WHERE id = ?', [this.lastID], (err, row) => {
+          if (err) {
+            res.status(500).json({ error: 'Erro ao recuperar barbeiro criado' });
+            return;
+          }
+          res.json(row);
         });
       }
     );
