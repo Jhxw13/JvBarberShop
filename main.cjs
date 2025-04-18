@@ -13,7 +13,7 @@ function createWindow() {
     },
   });
 
-  win.loadURL('http://localhost:5173');
+  win.loadURL('http://0.0.0.0:5173');
 }
 
 // Rotas para Clientes
