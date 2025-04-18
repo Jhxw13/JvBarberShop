@@ -14,10 +14,10 @@ import Configuracoes from "./pages/Configuracoes/Configuracoes";
 
 function App() {
   return (
-    <div className="flex h-screen bg-gradient-to-br from-dark-300 via-dark-200 to-dark-100">
+    <div className="flex bg-zinc-950 text-zinc-100">
       <Sidebar />
-      <div className="flex-1 h-screen overflow-auto">
-        <main className="container mx-auto">
+      <div className="flex-1 ml-20">
+        <main className="p-8">
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/pdv" element={<PDV />} />

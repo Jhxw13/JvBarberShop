@@ -1,4 +1,5 @@
 
+import { useState } from 'react';
 import { Link, useLocation } from "react-router-dom";
 import {
   LayoutDashboard,
@@ -9,6 +10,7 @@ import {
   DollarSign,
   FileText,
   Settings,
+  Menu,
 } from "lucide-react";
 
 const navItems = [
@@ -26,39 +28,33 @@ const navItems = [
 
 const Sidebar = () => {
   const { pathname } = useLocation();
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(true);
 
   return (
-    <aside className={`${isCollapsed ? 'w-20' : 'w-72'} transition-all duration-300 min-h-screen bg-dark-200/50 backdrop-blur-sm border-r border-accent-purple/20 p-6`}>
-      <div className="flex items-center justify-between mb-10">
-        {!isCollapsed && <h1 className="text-2xl font-bold text-accent-purple bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">JV</h1>}
+    <aside className={`${isCollapsed ? 'w-20' : 'w-72'} transition-all duration-300 bg-zinc-900 border-r border-zinc-800 p-4 flex flex-col fixed h-screen`}>
+      <div className="flex items-center justify-between mb-6">
+        {!isCollapsed && <h1 className="text-2xl font-bold text-purple-500">JV</h1>}
         <button 
           onClick={() => setIsCollapsed(!isCollapsed)}
-          className="text-zinc-400 hover:text-accent-purple"
+          className="p-2 hover:bg-zinc-800 rounded-lg"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="3" y1="12" x2="21" y2="12"></line>
-            <line x1="3" y1="6" x2="21" y2="6"></line>
-            <line x1="3" y1="18" x2="21" y2="18"></line>
-          </svg>
+          <Menu size={24} className="text-zinc-400" />
         </button>
       </div>
-      <h1 className="text-2xl font-bold mb-10 text-accent-purple bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
-        JV Barber Shop
-      </h1>
-      <nav className="space-y-2">
+      
+      <nav className="space-y-2 flex-1">
         {navItems.map(({ name, icon: Icon, path }) => (
           <Link
             key={name}
             to={path}
-            className={`flex items-center gap-3 p-3 rounded-lg transition-all duration-300 hover:bg-accent-purple/10 hover:shadow-glow group ${
+            className={`flex items-center gap-3 p-3 rounded-lg transition-all ${
               pathname === path
-                ? "bg-accent-purple/20 text-accent-purple"
-                : "text-zinc-400"
+                ? "bg-purple-500/10 text-purple-500"
+                : "text-zinc-400 hover:bg-zinc-800"
             }`}
           >
-            <Icon size={20} className="group-hover:text-accent-purple" />
-            {!isCollapsed && <span className="group-hover:text-accent-purple">{name}</span>}
+            <Icon size={20} />
+            {!isCollapsed && <span>{name}</span>}
           </Link>
         ))}
       </nav>
