@@ -5,6 +5,20 @@ const dbPath = path.join(__dirname, 'database.sqlite');
 const db = new sqlite3.Database(dbPath);
 
 db.serialize(() => {
+  // Produtos
+  db.run(`
+    CREATE TABLE IF NOT EXISTS produtos (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      nome TEXT NOT NULL,
+      descricao TEXT,
+      preco REAL NOT NULL,
+      estoque INTEGER NOT NULL,
+      categoria TEXT,
+      foto TEXT,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
   // Barbeiros
   db.run(`
     CREATE TABLE IF NOT EXISTS barbeiros (
@@ -14,19 +28,6 @@ db.serialize(() => {
       avaliacao REAL DEFAULT 0,
       clientes_atendidos INTEGER DEFAULT 0,
       disponivel BOOLEAN DEFAULT 1,
-      foto TEXT
-    )
-  `);
-
-  // Produtos
-  db.run(`
-    CREATE TABLE IF NOT EXISTS produtos (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      nome TEXT NOT NULL,
-      descricao TEXT,
-      preco REAL NOT NULL,
-      estoque INTEGER DEFAULT 0,
-      categoria TEXT,
       foto TEXT
     )
   `);
