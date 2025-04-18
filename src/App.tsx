@@ -5,6 +5,11 @@ import Dashboard from "./pages/Dashboard/Dashboard";
 import Agendamentos from "./pages/Agendamentos/Agendamentos";
 import Clientes from "./pages/Clientes/Clientes";
 import Servicos from "./pages/Servicos/Servicos";
+import Barbeiros from "./pages/Barbeiros/Barbeiros";
+import Produtos from "./pages/Produtos/Produtos";
+import Financeiro from "./pages/Financeiro/Financeiro";
+import Relatorios from "./pages/Relatorios/Relatorios";
+import Configuracoes from "./pages/Configuracoes/Configuracoes";
 
 function App() {
   return (
@@ -16,6 +21,11 @@ function App() {
           <Route path="/agendamentos" element={<Agendamentos />} />
           <Route path="/clientes" element={<Clientes />} />
           <Route path="/servicos" element={<Servicos />} />
+          <Route path="/barbeiros" element={<Barbeiros />} />
+          <Route path="/produtos" element={<Produtos />} />
+          <Route path="/financeiro" element={<Financeiro />} />
+          <Route path="/relatorios" element={<Relatorios />} />
+          <Route path="/configuracoes" element={<Configuracoes />} />
         </Routes>
       </main>
     </div>
