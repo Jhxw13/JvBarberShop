@@ -2,6 +2,7 @@
 import { Routes, Route } from "react-router-dom";
 import Sidebar from "./components/Sidebar";
 import Dashboard from "./pages/Dashboard/Dashboard";
+import PDV from "./pages/PDV/PDV";
 import Agendamentos from "./pages/Agendamentos/Agendamentos";
 import Clientes from "./pages/Clientes/Clientes";
 import Servicos from "./pages/Servicos/Servicos";
@@ -18,6 +19,7 @@ function App() {
       <main className="flex-1 overflow-auto p-8">
         <Routes>
           <Route path="/" element={<Dashboard />} />
+          <Route path="/pdv" element={<PDV />} />
           <Route path="/agendamentos" element={<Agendamentos />} />
           <Route path="/clientes" element={<Clientes />} />
           <Route path="/servicos" element={<Servicos />} />
