@@ -1,25 +1,70 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
-interface Product {
+interface Barbeiro {
+  id: number;
+  nome: string;
+}
+
+interface Produto {
   id: number;
   nome: string;
   preco: number;
 }
 
-interface Service {
+interface Servico {
   id: number;
   nome: string;
   preco: number;
 }
 
 export default function PDV() {
-  const [cartItems, setCartItems] = useState<(Product | Service)[]>([]);
+  const [barbeiros, setBarbeiros] = useState<Barbeiro[]>([]);
+  const [produtos, setProdutos] = useState<Produto[]>([]);
+  const [servicos, setServicos] = useState<Servico[]>([]);
+  const [barbeiroSelecionado, setBarbeiroSelecionado] = useState<number | null>(null);
+  const [cartItems, setCartItems] = useState<(Produto | Servico)[]>([]);
   const [total, setTotal] = useState(0);
 
-  const addToCart = (item: Product | Service) => {
+  useEffect(() => {
+    fetchBarbeiros();
+    fetchProdutos();
+    fetchServicos();
+  }, []);
+
+  const fetchBarbeiros = async () => {
+    try {
+      const response = await fetch('/api/barbeiros');
+      const data = await response.json();
+      setBarbeiros(data);
+    } catch (error) {
+      console.error('Erro ao buscar barbeiros:', error);
+    }
+  };
+
+  const fetchProdutos = async () => {
+    try {
+      const response = await fetch('/api/produtos');
+      const data = await response.json();
+      setProdutos(data);
+    } catch (error) {
+      console.error('Erro ao buscar produtos:', error);
+    }
+  };
+
+  const fetchServicos = async () => {
+    try {
+      const response = await fetch('/api/servicos');
+      const data = await response.json();
+      setServicos(data);
+    } catch (error) {
+      console.error('Erro ao buscar serviços:', error);
+    }
+  };
+
+  const addToCart = (item: Produto | Servico) => {
     setCartItems([...cartItems, item]);
     setTotal(total + item.preco);
   };
@@ -31,22 +76,41 @@ export default function PDV() {
   };
 
   const finalizeSale = async () => {
+    if (!barbeiroSelecionado) {
+      alert('Selecione um barbeiro para finalizar a venda');
+      return;
+    }
+
+    if (cartItems.length === 0) {
+      alert('Adicione pelo menos um item ao carrinho');
+      return;
+    }
+
     try {
       const response = await fetch('/api/vendas', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          items: cartItems,
-          total,
-          data: new Date().toISOString()
+          barbeiro_id: barbeiroSelecionado,
+          items: cartItems.map(item => ({
+            id: item.id,
+            tipo: 'preco' in item ? 'produto' : 'servico',
+            quantidade: 1,
+            preco: item.preco
+          })),
+          total
         })
       });
+
       if (response.ok) {
         setCartItems([]);
         setTotal(0);
+        setBarbeiroSelecionado(null);
+        alert('Venda finalizada com sucesso!');
       }
     } catch (error) {
       console.error('Erro ao finalizar venda:', error);
+      alert('Erro ao finalizar venda');
     }
   };
 
@@ -55,9 +119,34 @@ export default function PDV() {
       <div className="lg:col-span-2 space-y-6">
         <Card className="bg-zinc-800">
           <CardContent className="p-6">
+            <h2 className="text-xl font-bold mb-4">Selecione o Barbeiro</h2>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              {barbeiros.map((barbeiro) => (
+                <Button
+                  key={barbeiro.id}
+                  onClick={() => setBarbeiroSelecionado(barbeiro.id)}
+                  className={`w-full ${barbeiroSelecionado === barbeiro.id ? 'bg-purple-600' : 'bg-zinc-700'}`}
+                >
+                  {barbeiro.nome}
+                </Button>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-zinc-800">
+          <CardContent className="p-6">
             <h2 className="text-xl font-bold mb-4">Serviços</h2>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {/* Serviços serão carregados aqui */}
+              {servicos.map((servico) => (
+                <Button
+                  key={servico.id}
+                  onClick={() => addToCart(servico)}
+                  className="w-full bg-zinc-700"
+                >
+                  {servico.nome} - R$ {servico.preco.toFixed(2)}
+                </Button>
+              ))}
             </div>
           </CardContent>
         </Card>
@@ -66,7 +155,15 @@ export default function PDV() {
           <CardContent className="p-6">
             <h2 className="text-xl font-bold mb-4">Produtos</h2>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {/* Produtos serão carregados aqui */}
+              {produtos.map((produto) => (
+                <Button
+                  key={produto.id}
+                  onClick={() => addToCart(produto)}
+                  className="w-full bg-zinc-700"
+                >
+                  {produto.nome} - R$ {produto.preco.toFixed(2)}
+                </Button>
+              ))}
             </div>
           </CardContent>
         </Card>
@@ -101,7 +198,7 @@ export default function PDV() {
               <Button 
                 className="w-full bg-green-600 hover:bg-green-700"
                 onClick={finalizeSale}
-                disabled={cartItems.length === 0}
+                disabled={!barbeiroSelecionado || cartItems.length === 0}
               >
                 Finalizar Venda
               </Button>
