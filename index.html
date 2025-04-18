@@ -5,6 +5,32 @@
     <link rel="icon" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>JvBarberShop</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              dark: {
+                100: '#1a1a2e',
+                200: '#16162a',
+                300: '#0f0f1a'
+              },
+              accent: {
+                purple: '#8B5CF6',
+                glow: '#a855f7'
+              }
+            },
+            boxShadow: {
+              glow: '0 0 15px rgba(168, 85, 247, 0.5)'
+            },
+            backdropBlur: {
+              xs: '2px'
+            }
+          }
+        }
+      }
+    </script>
   </head>
   <body class="text-white bg-[#0f0f1a]">
     <div id="root"></div>
